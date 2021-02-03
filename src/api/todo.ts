@@ -1,7 +1,7 @@
 import { Todo, TodoPartial } from "../model/Todo";
 import { getJson, URLBuilder, createJsonHeaders } from "./utils";
 
-const TODO_API_BASE_URL = "http://localhost:3000/todo";
+const TODO_API_BASE_URL = "http://localhost:3000/todos";
 
 const urlBuilder = new URLBuilder(TODO_API_BASE_URL);
 
