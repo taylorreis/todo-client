@@ -37,7 +37,7 @@ export default function EditTodoForm({
   return (
     <>
       <ContentContainer>
-        <textarea
+        <textarea className="border-2 w-full h-full"
           value={description}
           onChange={updateTodoDescription}
         />

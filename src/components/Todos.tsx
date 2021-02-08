@@ -21,9 +21,12 @@ export default function Todos() {
     },
   });
 
+  const closeCreateTodoForm = () => {
+    setIsCreateFormOpen(false);
+  };
   const createTodoHandler = async (description: string) => {
     await createTodoMutation.mutateAsync({ description });
-    setIsCreateFormOpen(false);
+    closeCreateTodoForm();
   };
   const openCreateTodoForm = () => {
     setIsCreateFormOpen(true);
@@ -31,7 +34,7 @@ export default function Todos() {
 
   return (
     <>
-      <Header openCreateTodoForm={openCreateTodoForm} />
+      <Header openCreateTodoForm={openCreateTodoForm} goHome={closeCreateTodoForm} />
       <main>
         {isCreateFormOpen ? (
           <CreateTodoForm createTodoHandler={createTodoHandler} />
