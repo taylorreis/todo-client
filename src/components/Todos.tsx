@@ -2,20 +2,27 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
 import CreateTodoForm from "./CreateTodoForm";
-import Header from './Header';
+import Header from "./Header";
 import TodoCard from "./TodoCard/";
 
 import * as api from "../api";
 
-import { Todo } from "../model/Todo";
+import { Todo, TodoPartial } from "../model/Todo";
 
-export default function Todos() {
+type Props = {
+  token: string;
+  logout: () => void;
+};
+
+export default function Todos({ token, logout }: Props) {
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const todosQuery = useQuery<Array<Todo>>("todos", api.todo.getAll);
-  const createTodoMutation = useMutation(api.todo.create, {
+  const todosQuery = useQuery<Array<Todo>>("todos", () =>
+    api.todo.getAll(token)
+  );
+  const createTodoMutation = useMutation((body: TodoPartial) => api.todo.create(token, body), {
     onSuccess: () => {
       queryClient.invalidateQueries("todos");
     },
@@ -34,13 +41,17 @@ export default function Todos() {
 
   return (
     <>
-      <Header openCreateTodoForm={openCreateTodoForm} goHome={closeCreateTodoForm} />
+      <Header
+        openCreateTodoForm={openCreateTodoForm}
+        goHome={closeCreateTodoForm}
+        logout={logout}
+      />
       <main>
         {isCreateFormOpen ? (
           <CreateTodoForm createTodoHandler={createTodoHandler} />
         ) : (
           (todosQuery.data ?? []).map((todo) => (
-            <TodoCard key={todo.id} todo={todo} />
+            <TodoCard key={todo.id} todo={todo} token={token} />
           ))
         )}
       </main>

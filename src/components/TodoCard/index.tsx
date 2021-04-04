@@ -12,23 +12,30 @@ import { Todo } from "../../model/Todo";
 
 type Props = {
   todo: Todo;
+  token: string;
 };
 
-export default function TodoCard({ todo }: Props) {
+export default function TodoCard({ todo, token }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const editTodoMutation = useMutation(api.todo.update, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
-    },
-  });
-  const deleteTodoMutation = useMutation(api.todo.remove, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
-    },
-  });
+  const editTodoMutation = useMutation(
+    (todo: Todo) => api.todo.update(token, todo),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todos");
+      },
+    }
+  );
+  const deleteTodoMutation = useMutation(
+    (id: string) => api.todo.remove(token, id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("todos");
+      },
+    }
+  );
 
   const saveTodoHandler = async (todo: Todo) => {
     await editTodoMutation.mutateAsync(todo);

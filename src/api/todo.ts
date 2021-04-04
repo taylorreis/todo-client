@@ -1,25 +1,34 @@
 import { Todo, TodoPartial } from "../model/Todo";
-import { getJson, URLBuilder, createJsonHeaders } from "./utils";
 
-const TODO_API_BASE_URL = "http://localhost:3000/todos";
+import { BASE_HOST, TODOS } from "./constants";
+import {
+  getJson,
+  HeadersBuilder,
+  URLBuilder,
+} from "./utils";
 
-const urlBuilder = new URLBuilder(TODO_API_BASE_URL);
-
-export const getAll = () => fetch(urlBuilder.build()).then(getJson);
-export const get = (id: string) => fetch(urlBuilder.build(id)).then(getJson);
-export const create = (body: TodoPartial) =>
-  fetch(urlBuilder.build(), {
+export const getAll = (token: string) =>
+  fetch(URLBuilder.init(BASE_HOST, TODOS).build(), {
+    headers: HeadersBuilder.init().addAuthorization(token).headers,
+  }).then(getJson);
+export const get = (token: string, id: string) =>
+  fetch(URLBuilder.init(BASE_HOST, `${TODOS}/${id}`).build(), {
+    headers: HeadersBuilder.init().addAuthorization(token).headers,
+  }).then(getJson);
+export const create = (token: string, body: TodoPartial) =>
+  fetch(URLBuilder.init(BASE_HOST, TODOS).build(), {
     method: "POST",
-    headers: createJsonHeaders(),
+    headers: HeadersBuilder.init().addJson().addAuthorization(token).headers,
     body: JSON.stringify(body),
   }).then(getJson);
-export const update = (todo: Todo) =>
-  fetch(urlBuilder.build(todo.id), {
+export const update = (token: string, todo: Todo) =>
+  fetch(URLBuilder.init(BASE_HOST, `${TODOS}/${todo.id}`).build(), {
     method: "PUT",
-    headers: createJsonHeaders(),
+    headers: HeadersBuilder.init().addJson().addAuthorization(token).headers,
     body: JSON.stringify(todo),
   }).then(getJson);
-export const remove = (id: string) =>
-  fetch(urlBuilder.build(id), {
+export const remove = (token: string, id: string) =>
+  fetch(URLBuilder.init(BASE_HOST, `${TODOS}/${id}`).build(), {
     method: "DELETE",
+    headers: HeadersBuilder.init().addAuthorization(token).headers,
   }).then(getJson);

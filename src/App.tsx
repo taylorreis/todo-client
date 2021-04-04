@@ -1,30 +1,31 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import LoginForm from "./components/LoginForm";
+import LoginForm from "./components/Login";
 import Todos from "./components/Todos";
 
 const queryClient = new QueryClient();
 
-const getComponent = (
-  isLoggedIn: boolean,
-  setIsLoggedIn: Dispatch<SetStateAction<boolean>>
-) => {
-  if (isLoggedIn) {
+function App() {
+  const [token, setToken] = useState<string | undefined>();
+
+  const setLoginToken = (token: string) => setToken(token);
+  const clearLoginToken = () => setToken(undefined);
+
+  if (token != null) {
     return (
       <QueryClientProvider client={queryClient}>
-        <Todos />
+        <Todos token={token} logout={clearLoginToken} />
       </QueryClientProvider>
     );
   }
 
-  return <LoginForm setIsLoggedIn={setIsLoggedIn} />;
-};
-
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  return getComponent(isLoggedIn, setIsLoggedIn);
+  return (
+    <LoginForm
+      setLoginToken={setLoginToken}
+      clearLoginToken={clearLoginToken}
+    />
+  );
 }
 
 export default App;
